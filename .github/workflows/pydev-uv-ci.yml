@@ -1,0 +1,29 @@
+name: Continuous Integration Python
+on:
+  pull_request:
+    branches:
+      - develop
+jobs:
+  python-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+
+      - name: Install Dependencies
+        run: uv sync --locked
+
+      - name: Run Ruff Linter
+        run: uv run ruff check --output-format=github
+
+      - name: Run Ruff Formater
+        run: uv run ruff format --check --diff
